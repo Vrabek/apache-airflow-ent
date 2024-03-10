@@ -1,0 +1,32 @@
+#Manual
+docker run -it --rm -p 8080:8080 python:3.8-slim /bin/bash
+
+export AIRFLOW=/usr/local/airflow
+
+env | grep airflow
+
+apt-get update -y && apt-get install -y wget libczmq-dev curl libssl-dev git inetutils-telnet bind9utils freetds-dev libkrb5-dev libsasl2-dev libffi-dev libpq-dev freetds-bin build-essential default-libmysqlclient-dev apt-utils rsync zip unzip gcc && apt-get clean
+
+useradd -ms /bin/bash -d ${AIRFLOW_HOME} airflow
+
+su - airflow
+
+wget https://raw.githubusercontent.com/apache/airflow/constraints-2.0.2/constraints-3.8.txt
+
+mv constraints-3.8.txt requirements.txt
+
+pip install "apache-airflow[crypto,celery,postgres,cncf.kubernetes,docker]"==2.0.2 --constraint ./requirements.txt
+
+airflow db init
+
+airflow scheduler &
+
+airflow users create -h
+
+airflow webserver &
+
+#Using Dockerfile 
+
+docker build -t airflow-basics .
+
+docker run --rm -d -p 8080:8080 airflow-basic
